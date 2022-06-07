@@ -3,21 +3,31 @@ INCLUDE Irvine32.inc
 
 .data
 
-string BYTE "message",0
 
 .code
 
 
+CalculateMean PROC
+
+
+
+
+
+ret
+CalculateMean ENDP
+
+
+CalculateVariance PROC
+
+
+
+
+ret
+CalculateVariance ENDP
+
+
 main PROC
 
-
-mov eax, 12
-call WriteInt
-
-call Crlf
-
-mov edx, OFFSET string
-call WriteString
 
 
 
