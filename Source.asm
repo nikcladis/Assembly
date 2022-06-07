@@ -11,6 +11,10 @@ string BYTE "message",0
 main PROC
 
 
+mov eax, 12
+call WriteInt
+
+call Crlf
 
 mov edx, OFFSET string
 call WriteString
