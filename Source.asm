@@ -1,141 +1,150 @@
-TITLE Assembly Project
+TITLE LAB3
 INCLUDE Irvine32.inc
+
 
 .data
 
-array SWORD 10,20,30,40,50,60,70,80,90,100
-message1 BYTE "Mean = ",0
-message2 BYTE "Variance = ",0
+A_poly DWORD 02Dh,0CCh,0E4h,0Fh
+m_power DWORD 3
+
+B_poly DWORD 0C7h,04Fh,72h
+n_power DWORD 2
+
+P_poly DWORD ?
+p_power DWORD ?
+
+m1 BYTE "Polynomial A = ",0
+comma BYTE ", ",0
+m2 BYTE "Polynomial B = ",0
+close BYTE "}",0
+m3 BYTE "Polynomial P = ",0
+
+char1 BYTE " + ",0
+char2 BYTE "x^",0
+
 
 .code
 
-;int CalculateMean(int *array, int arraysize, int *mean)
+;int *?ultiply ( int *A, int m, int *B, int n, int *P, int *p)
 
-CalculateMean PROC
+Multiply PROC
 
 push ebp
 mov ebp,esp
-push edi
-push esi
-
-mov edi, [ebp+8]
-mov esi, 0
-mov eax, 0
-
-jmp cond1
-
-lp1:
-	add ax, [edi+esi*2]
-	inc esi
-	cond1: 
-		cmp esi, [ebp+12]
-		jl lp1
-
-movsx eax,ax
-cdq
-idiv SDWORD PTR [ebp+12]
-
-mov edi, [ebp+16]
-mov [edi], eax
+pushad
 
 
-pop esi
-pop edi
+
+
+
+popad
 mov esp,ebp
 pop ebp
 
-ret 12
+ret
+Multiply ENDP
 
-CalculateMean ENDP
+;void PrintPoly(int P[], int n)
 
-;int CalculateVariance(int *array, int arraysize, int mean, int *variance)
-
-CalculateVariance PROC
+PrintPoly PROC
 
 push ebp
 mov ebp,esp
+push esi
 push edi
-push esi 
-push ebx
 push edx
 
-mov edi, [ebp+8]
-mov ebx, [ebp+16]
 mov esi, 0
-mov eax, 0
+mov edi, [ebp+8]
 
+mov eax, [edi +esi*4]
+call WriteInt
 
-jmp cond2
+mov edx, OFFSET char1
+call WriteString 
 
-lp2:
-	movsx edx, SWORD PTR [edi+esi*2]
-	sub edx, ebx
-	imul edx, edx
-	add eax, edx
-	inc esi
-	cond2:
+inc esi
+
+jmp cond
+lp:	
+		mov eax, [edi +esi*4]
+		call WriteInt
+		mov edx, OFFSET char2
+		call WriteString
+		mov eax, esi
+		call WriteInt
+		mov edx, OFFSET char1
+		call WriteString 
+		inc esi
+
+cond:
+		
 		cmp esi, [ebp+12]
-		jl lp2
+		jl lp
 
-	cdq
-	idiv SDWORD PTR [ebp+12]
+mov eax, [edi +esi*4]
+call WriteInt
+mov edx, OFFSET char2
+call WriteString
+mov eax, esi
+call WriteInt
 
-	mov edi, [ebp+20]
-	mov [edi], eax
 
 pop edx
-pop ebx
-pop esi
 pop edi
+pop esi
 mov esp,ebp
 pop ebp
 
-ret 16
-
-CalculateVariance ENDP
+ret
+PrintPoly ENDP
 
 
 main PROC
 
-
 push ebp
 mov ebp,esp
-
-sub esp,8
-mov [ebp-4], DWORD PTR 0; int mean
-mov [ebp-8], DWORD PTR 0; int variance
+sub esp,4
+mov [ebp-4], DWORD PTR 0; int p_power
 
 
-;int CalculateMean(int *array, int arraysize, int *mean)
+;void PrintPoly(int P[], int n)
+
+mov edx, OFFSET m1
+call WriteString 
+
+push m_power
+push OFFSET A_poly
+call PrintPoly
+
+call Crlf
+
+mov edx, OFFSET m2
+call WriteString 
+
+push n_power
+push OFFSET B_poly
+call PrintPoly
+
+;int *?ultiply ( int *A, int m, int *B, int n, int *P, int *p)
 
 lea edi, [ebp-4]
 push edi
-push LENGTHOF array
-push OFFSET array
+push OFFSET P_poly
+push n_power
+push OFFSET B_poly
+push m_power
+push OFFSET A_poly
+call Multiply
 
-call CalculateMean
-
-mov edx, OFFSET message1
-call WriteString
-call WriteInt
 call Crlf
 
+mov edx, OFFSET m3
+call WriteString 
 
-
-;int CalculateVariance(int *array, int arraysize, int mean, int *variance)
-
-lea edi, [ebp-8]
-push edi
-push SDWORD PTR [ebp-4]
-push LENGTHOF array
-push OFFSET array
-
-call CalculateVariance
-mov edx, OFFSET message2
-call WriteString
-call WriteInt
-call Crlf
-
+push p_power
+push OFFSET P_poly
+call PrintPoly
 
 
 exit
